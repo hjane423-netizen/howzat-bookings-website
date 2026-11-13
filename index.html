@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#193d32">
+  <meta name="description" content="Send an enquiry, follow your event booking and message Howzat Catering & Events.">
+  <title>Howzat Catering & Events | Booking Portal</title>
+  <style>
+    :root { --green:#193d32; --green2:#275544; --gold:#bea06b; --cream:#f8f6f0; --ink:#263d31; --muted:#64736b; --border:#e3e7df; font-family: system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--cream) }
+    *{box-sizing:border-box}body{margin:0}a{color:var(--green2)}
+    header{background:var(--green);color:#fff;text-align:center;padding:27px 15px 25px;border-bottom:5px solid var(--gold)}
+    .brand{font:bold 37px/1.1 Georgia,serif;letter-spacing:.085em}.strap{font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:#e5d3a7;margin-top:7px}
+    main{max-width:950px;margin:auto;padding:14px 14px 45px}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:21px;margin:15px 0;box-shadow:0 3px 14px #163b2a0a}
+    .hero{text-align:center}.hero h1{font:29px/1.2 Georgia,serif;margin:3px 0 12px}.hero p{max-width:640px;margin:10px auto;line-height:1.55}
+    h2{font:24px/1.25 Georgia,serif;margin:2px 0 12px}h3{font:21px/1.2 Georgia,serif;margin:5px 0}p{line-height:1.55}.muted{color:var(--muted)}.small{font-size:13px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}.span2{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:650;margin:7px 0 5px}
+    input,textarea,select{width:100%;padding:11px 12px;border:1px solid #bbc9bd;border-radius:9px;background:#fff;color:#22382d;font:inherit;min-height:45px}
+    textarea{min-height:87px;resize:vertical}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    button{background:var(--green2);color:white;border:0;border-radius:9px;padding:12px 17px;font-size:14px;font-weight:650;cursor:pointer;min-height:44px}
+    button.gold{background:#ad8846;color:white}button.secondary{background:#e9ede7;color:#24513e}button:disabled{opacity:.55;cursor:wait}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.hidden{display:none!important}
+    .alert{background:#edf6ef;color:#204b34;border:1px solid #bddbc9;border-radius:10px;padding:13px 15px;margin:14px 0;line-height:1.5}
+    .alert.error{background:#fff0f0;border-color:#eab5b5;color:#842a2a}.alert:empty{display:none}
+    .booking{border:1px solid var(--border);border-radius:13px;padding:17px;margin:14px 0}.status{display:inline-block;border-radius:18px;padding:5px 11px;background:#eef3e9;color:#315a36;font-size:12px;font-weight:700}
+    .messages{background:#f5f7f3;border-radius:9px;padding:9px 12px;max-height:360px;overflow-y:auto;margin:12px 0}
+    .bubble{border-left:3px solid var(--gold);background:white;padding:10px 12px;border-radius:6px;margin:9px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+    .bubble strong{display:block;font-size:12px;color:#5e6f60;margin-bottom:5px}
+    .fieldline{margin:5px 0;overflow-wrap:anywhere}.divider{border:0;border-top:1px solid #e8ebe5;margin:15px 0}
+    .closed{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding:9px 0;gap:8px}
+    footer{text-align:center;padding:8px 15px 36px;color:var(--muted);font-size:12px;line-height:1.6}
+    @media(max-width:620px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.card{padding:17px}.brand{font-size:32px}.hero h1{font-size:26px}}
+  </style>
+</head>
+<body>
+<header><div class="brand">HOWZAT</div><div class="strap">Catering &amp; Events · Booking Portal</div></header>
+<main>
+  <section class="card hero"><h1>Let's plan your event</h1><p>Make a catering enquiry, keep track of your booking, and message the Howzat team — all in one place.</p><p class="small">Enquiries do not reserve a date. A booking is confirmed only when Howzat has agreed it and the required deposit has been received.</p></section>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <section id="auth" class="card">
+    <h2>Welcome to Howzat</h2><p class="muted">Sign in or create a free customer account using your email. You do not need ChatGPT or WhatsApp.</p>
+    <div class="grid"><div><label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></div><div><label for="password">Password (at least 6 characters)</label><input id="password" type="password" minlength="6" autocomplete="current-password" required></div></div>
+    <div class="buttons"><button id="signin">Sign in</button><button id="signup" class="gold">Create account</button><button id="reset" class="secondary">Forgot password?</button></div>
+    <p class="small">Creating an account may send a verification email. Please check your inbox and return to this website afterwards.</p>
+  </section>
+  <div id="portal" class="hidden">
+    <section class="card toolbar"><div><strong id="identity"></strong><div id="role" class="small"></div></div><button id="signout" class="secondary">Sign out</button></section>
+    <section class="card" id="newBooking">
+      <h2>New catering enquiry</h2><p class="muted">Tell us about your event and we'll reply after reviewing availability.</p>
+      <form id="bookingForm"><div class="grid">
+        <div><label for="customer">Your full name *</label><input id="customer" required maxlength="120" autocomplete="name"></div>
+        <div><label for="phone">Telephone number *</label><input id="phone" type="tel" required maxlength="40" autocomplete="tel"></div>
+        <div><label for="date">Date of event *</label><input id="date" type="date" required></div>
+        <div><label for="time">Approximate serving time</label><input id="time" type="time"></div>
+        <div><label for="guests">Number of guests *</label><input id="guests" type="number" min="1" max="10000" required></div>
+        <div><label for="package">Type of catering *</label><select id="package" required><option value="">Please choose</option><option>Collection package</option><option>Classic buffet</option><option>Signature buffet</option><option>Premium buffet</option><option>Luxury buffet</option><option>Dignity funeral buffet</option><option>Wedding / special event</option><option>Afternoon tea</option><option>Other / not sure yet</option></select></div>
+        <div class="span2"><label for="location">Venue / collection or delivery address</label><input id="location" maxlength="240" placeholder="Venue or area"></div>
+        <div class="span2"><label for="diet">Dietary requirements and allergies</label><textarea id="diet" maxlength="1000" placeholder="Please include any allergies or special dietary needs"></textarea></div>
+        <div class="span2"><label for="details">Anything else we should know?</label><textarea id="details" maxlength="3000" placeholder="Occasion, package size, extra requirements..."></textarea></div>
+      </div>
+      <p class="small">Our standard buffets generally start at 20 guests. Smaller collection packages may be available. Delivery is normally for buffets of 30 guests or more. We will confirm suitability individually.</p>
+      <button id="submit" type="submit">Send enquiry to Howzat</button></form>
+    </section>
+    <section class="card"><div class="toolbar"><h2 id="bookingsTitle">My enquiries &amp; bookings</h2><button class="secondary" id="reload">Refresh</button></div><div id="bookings" class="muted">Loading...</div></section>
+    <section id="adminPanel" class="card hidden"><h2>Howzat diary tools</h2><p class="small">Blocking a date stops new enquiries for that event date through this website. You still need to manage bookings from other channels separately.</p><div class="grid"><div><label for="closeDate">Block event date</label><input id="closeDate" type="date"></div><div style="align-self:end"><button id="closeBtn">Block date</button></div></div><div id="closedDates"></div></section>
+  </div>
+</main>
+<footer>HOWZAT CATERING AND EVENTS LIMITED<br>For urgent requests, please contact Howzat through your usual channels.</footer>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/+esm';
+const supabase = createClient('https://yoacrlrzaiixqtwdscuo.supabase.co','sb_publishable_2WotSrHshthcS7wBkh9ghA_GTCD5cfb',{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+const $ = id => document.getElementById(id);
+const escapeHTML = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let currentUser=null, isAdmin=false, closedDates=[];
+function alertMsg(msg,isError=false){ $('notice').innerHTML='<div class="alert'+(isError?' error':'')+'">'+escapeHTML(msg)+'</div>'; if (isError) $('notice').scrollIntoView({behavior:'smooth',block:'nearest'}); }
+function fail(e){alertMsg(e?.message||String(e),true);}
+function todayISO(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function displayDate(s){if(!s)return 'Date to be agreed';const [y,m,d]=s.split('-');return new Date(Number(y),Number(m)-1,Number(d)).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}
+function money(p){return '£'+(Number(p||0)/100).toFixed(2);}
+$('date').min=todayISO();$('closeDate').min=todayISO();
+async function signAction(mode){
+  const email=$('email').value.trim(),password=$('password').value;
+  if(!email){alertMsg('Please enter your email address.',true);return;}
+  if(mode!=='reset'&&password.length<6){alertMsg('Please enter a password of at least six characters.',true);return;}
+  for(const id of ['signin','signup','reset'])$(id).disabled=true;
+  try {
+    let result;
+    if(mode==='signup')result=await supabase.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+    else if(mode==='signin')result=await supabase.auth.signInWithPassword({email,password});
+    else result=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    if(result.error)throw result.error;
+    alertMsg(mode==='signup'?'Thank you! Please check your email for a verification message, then return here to sign in.':mode==='reset'?'If this email is registered, you will receive a password reset link.':'You are signed in.');
+    await refreshUser();
+  } catch(e){fail(e);} finally {for(const id of ['signin','signup','reset'])$(id).disabled=false;}
+}
+$('signin').onclick=()=>signAction('signin');$('signup').onclick=()=>signAction('signup');$('reset').onclick=()=>signAction('reset');
+$('signout').onclick=async()=>{const {error}=await supabase.auth.signOut();if(error)return fail(error);await refreshUser();alertMsg('You have signed out.');};
+async function refreshUser(){
+  const {data:{user},error}=await supabase.auth.getUser();if(error&&!/session missing/i.test(error.message||''))return fail(error);
+  currentUser=user;$('auth').classList.toggle('hidden',!!user);$('portal').classList.toggle('hidden',!user);
+  if(!user){isAdmin=false;return;}
+  $('identity').textContent=user.email||'Signed in';
+  const r=await supabase.from('howzat_admins').select('user_id').eq('user_id',user.id).maybeSingle();if(r.error)return fail(r.error);
+  isAdmin=!!r.data;
+  $('role').textContent=isAdmin?'Howzat administrator':'Customer account';
+  $('newBooking').classList.toggle('hidden',isAdmin);$('adminPanel').classList.toggle('hidden',!isAdmin);
+  $('bookingsTitle').textContent=isAdmin?'All Howzat enquiries & bookings':'My enquiries & bookings';
+  await loadAll();
+}
+$('bookingForm').onsubmit=async event=>{
+  event.preventDefault();if(!currentUser||isAdmin)return;
+  const event_date=$('date').value;
+  if(!event_date||event_date<todayISO())return alertMsg('Please choose a future event date.',true);
+  if(closedDates.includes(event_date))return alertMsg('Sorry, we are unable to accept new enquiries for that date.',true);
+  const data={name:$('customer').value.trim(),phone:$('phone').value.trim(),time:$('time').value,guests:Number($('guests').value),package:$('package').value,location:$('location').value.trim(),diet:$('diet').value.trim(),details:$('details').value.trim(),email:currentUser.email};
+  if(!data.name||!data.phone||!data.guests||!data.package)return alertMsg('Please complete all required fields.',true);
+  $('submit').disabled=true;
+  try {const r=await supabase.from('howzat_bookings').insert({user_id:currentUser.id,event_date,data,status:'Enquiry',total:0,paid:0});if(r.error)throw r.error;
+    $('bookingForm').reset();alertMsg('Your enquiry has been sent. It will appear below. Your date is not reserved until Howzat confirms your booking and deposit.');await loadAll();
+  }catch(e){fail(e);}finally{$('submit').disabled=false;}
+};
+async function loadAll(){
+  if(!currentUser)return;
+  try {
+    const [b,m,c]=await Promise.all([
+      supabase.from('howzat_bookings').select('*').order('created',{ascending:false}).limit(250),
+      supabase.from('howzat_messages').select('*').order('created',{ascending:true}).limit(1000),
+      supabase.from('howzat_closed_dates').select('event_date').order('event_date',{ascending:true})
+    ]);
+    for(const result of [b,m,c])if(result.error)throw result.error;
+    closedDates=(c.data||[]).map(x=>x.event_date);
+    renderBookings(b.data||[],m.data||[]);renderClosedDates();
+  }catch(e){fail(e);}
+}
+function renderBookings(bookings,messages){
+  const root=$('bookings');root.replaceChildren();
+  if(!bookings.length){root.innerHTML='<p class="muted">No enquiries yet. Your requests will appear here.</p>';return;}
+  for(const b of bookings){
+    const d=b.data||{};const card=document.createElement('div');card.className='booking';
+    const thread=messages.filter(x=>x.booking_id===b.id);
+    let html='<div class="toolbar"><h3>'+escapeHTML(d.name||'Enquiry')+' · '+escapeHTML(displayDate(b.event_date))+'</h3><span class="status">'+escapeHTML(b.status)+'</span></div>'+
+      '<p class="muted">'+escapeHTML(d.package||'Catering')+' · '+escapeHTML(d.guests||'?')+' guests · '+escapeHTML(d.time||'Time TBC')+'</p>'+
+      '<p class="small fieldline"><strong>Venue:</strong> '+escapeHTML(d.location||'Not provided')+'</p>'+
+      '<p class="small fieldline"><strong>Telephone:</strong> '+escapeHTML(d.phone||'Not provided')+'<br><strong>Email:</strong> '+escapeHTML(d.email||'')+'</p>';
+    if(d.diet)html+='<p class="small fieldline"><strong>Dietary:</strong> '+escapeHTML(d.diet)+'</p>';
+    if(d.details)html+='<p class="small fieldline"><strong>Notes:</strong> '+escapeHTML(d.details)+'</p>';
+    if(b.total>0||b.paid>0)html+='<p><strong>Agreed total:</strong> '+money(b.total)+' &nbsp; <strong>Paid:</strong> '+money(b.paid)+' &nbsp; <strong>Balance:</strong> '+money(Math.max(0,b.total-b.paid))+'</p>';
+    if(isAdmin){
+      html+='<div class="grid"><div><label>Booking status</label><select class="statusSelect">'+['Enquiry','Awaiting deposit','Confirmed','Completed','Declined','Cancelled'].map(s=>'<option'+(b.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+        '<div><label>Total agreed (£)</label><input class="totalInput" type="number" min="0" step="0.01" value="'+(b.total/100).toFixed(2)+'"></div>'+
+        '<div><label>Paid (£)</label><input class="paidInput" type="number" min="0" step="0.01" value="'+(b.paid/100).toFixed(2)+'"></div><div style="align-self:end"><button class="saveBtn">Save booking</button></div></div>';
+    }
+    html+='<hr class="divider"><strong>Messages</strong><div class="messages">'+(thread.length?thread.map(msg=>'<div class="bubble"><strong>'+escapeHTML(msg.author)+' · '+escapeHTML(new Date(msg.created).toLocaleString('en-GB'))+'</strong>'+escapeHTML(msg.body)+'</div>').join(''):'<p class="small">No messages yet.</p>')+'</div>'+
+      '<label>Send a message</label><textarea class="msgText" maxlength="4000" placeholder="Write a message to '+(isAdmin?'the customer':'Howzat')+'"></textarea><div class="buttons"><button class="sendMsg">Send message</button></div>';
+    card.innerHTML=html;root.appendChild(card);
+    card.querySelector('.sendMsg').onclick=async()=>{
+      const field=card.querySelector('.msgText'),body=field.value.trim();if(!body)return;
+      const btn=card.querySelector('.sendMsg');btn.disabled=true;
+      const r=await supabase.from('howzat_messages').insert({booking_id:b.id,author_id:currentUser.id,author:isAdmin?'Howzat':'Customer',body});
+      btn.disabled=false;if(r.error)fail(r.error);else await loadAll();
+    };
+    if(isAdmin)card.querySelector('.saveBtn').onclick=async()=>{
+      const total=Math.round(Number(card.querySelector('.totalInput').value)*100),paid=Math.round(Number(card.querySelector('.paidInput').value)*100);
+      if(!Number.isSafeInteger(total)||!Number.isSafeInteger(paid)||total<0||paid<0||paid>total||total>100000000)return alertMsg('Please enter valid amounts. Paid cannot exceed total.',true);
+      const btn=card.querySelector('.saveBtn');btn.disabled=true;
+      const r=await supabase.from('howzat_bookings').update({status:card.querySelector('.statusSelect').value,total,paid}).eq('id',b.id);
+      btn.disabled=false;if(r.error)fail(r.error);else{alertMsg('Booking updated.');await loadAll();}
+    };
+  }
+}
+function renderClosedDates(){
+  if(!isAdmin)return;
+  const root=$('closedDates');root.replaceChildren();
+  if(!closedDates.length){root.innerHTML='<p class="small">No dates blocked.</p>';return;}
+  const heading=document.createElement('p');heading.className='small';heading.textContent='Blocked dates';root.append(heading);
+  for(const date of closedDates){
+    const row=document.createElement('div');row.className='closed';
+    const span=document.createElement('span');span.textContent=displayDate(date);
+    const button=document.createElement('button');button.className='secondary';button.textContent='Unblock';
+    button.onclick=async()=>{button.disabled=true;const r=await supabase.from('howzat_closed_dates').delete().eq('event_date',date);if(r.error){button.disabled=false;fail(r.error);}else await loadAll();};
+    row.append(span,button);root.appendChild(row);
+  }
+}
+$('closeBtn').onclick=async()=>{
+  const event_date=$('closeDate').value;
+  if(!event_date)return alertMsg('Please select a date to block.',true);
+  const r=await supabase.from('howzat_closed_dates').insert({event_date});if(r.error)fail(r.error);else await loadAll();
+};
+$('reload').onclick=()=>loadAll();
+supabase.auth.onAuthStateChange(()=>{setTimeout(()=>refreshUser(),0);});
+await refreshUser();
+</script>
+</body></html>
